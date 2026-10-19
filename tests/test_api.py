@@ -80,3 +80,13 @@ def test_metrics_endpoint(client):
     assert response.status_code == 200
     assert "heart_disease_http_requests_total" in response.text
     assert "heart_disease_http_request_duration_seconds" in response.text
+
+
+def test_dashboard_endpoint(client):
+    response = client.get("/dashboard")
+
+    assert response.status_code == 200
+    assert "Heart Disease API Monitoring" in response.text
+    assert "Total HTTP requests" in response.text
+    assert "Average API latency" in response.text
+    assert 'fetch("/metrics"' in response.text
