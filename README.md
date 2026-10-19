@@ -440,18 +440,6 @@ automatically provide a publicly accessible production endpoint. A public
 deployment, if required, needs an appropriately configured cloud or hosting
 environment and security controls.
 
-## 17. Submission evidence
-
-Before submission, capture genuine evidence of:
-
-- EDA figures and missing-value analysis
-- Model comparison and evaluation metrics
-- MLflow runs, parameters, metrics, and artifacts
-- Successful tests and the latest GitHub Actions run
-- Docker build and a successful API request
-- Kubernetes deployment status and a working endpoint
-- API metrics, request logging, and the monitoring dashboard
-
 Include the screenshots in the report and the repository's screenshot
 directory. Also include the final report and a short screen-recorded
 demonstration as required by the assignment instructions.
