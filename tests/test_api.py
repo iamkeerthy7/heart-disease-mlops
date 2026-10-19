@@ -70,3 +70,13 @@ def test_invalid_age_is_rejected(client):
 def test_missing_features_are_rejected(client):
     response = client.post("/predict", json={"age": 63})
     assert response.status_code == 422
+
+def test_metrics_endpoint(client):
+    # Generate a request so the middleware records a metric.
+    client.get("/health")
+
+    response = client.get("/metrics")
+
+    assert response.status_code == 200
+    assert "heart_disease_http_requests_total" in response.text
+    assert "heart_disease_http_request_duration_seconds" in response.text

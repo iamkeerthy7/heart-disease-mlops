@@ -1,27 +1,42 @@
+
+import logging
+import time
 from pathlib import Path
 
 import joblib
 import pandas as pd
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request, Response
+from prometheus_client import CONTENT_TYPE_LATEST, Counter, Histogram, generate_latest
 from pydantic import BaseModel, ConfigDict, Field
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 MODEL_PATH = PROJECT_ROOT / "models" / "best_model.joblib"
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s %(message)s",
+)
+logger = logging.getLogger("heart_disease_api")
+
+HTTP_REQUESTS = Counter(
+    "heart_disease_http_requests_total",
+    "Total HTTP requests",
+    ["method", "endpoint", "status"],
+)
+HTTP_REQUEST_DURATION = Histogram(
+    "heart_disease_http_request_duration_seconds",
+    "HTTP request duration in seconds",
+    ["method", "endpoint"],
+)
+PREDICTION_REQUESTS = Counter(
+    "heart_disease_predictions_total",
+    "Prediction requests by outcome",
+    ["outcome"],
+)
+
 FEATURES = [
-    "age",
-    "sex",
-    "cp",
-    "trestbps",
-    "chol",
-    "fbs",
-    "restecg",
-    "thalach",
-    "exang",
-    "oldpeak",
-    "slope",
-    "ca",
-    "thal",
+    "age", "sex", "cp", "trestbps", "chol", "fbs", "restecg",
+    "thalach", "exang", "oldpeak", "slope", "ca", "thal",
 ]
 
 app = FastAPI(
@@ -54,6 +69,36 @@ class HeartDiseaseInput(BaseModel):
     thal: int = Field(ge=3, le=7)
 
 
+@app.middleware("http")
+async def monitor_requests(request: Request, call_next):
+    start = time.perf_counter()
+    status_code = 500
+
+    try:
+        response = await call_next(request)
+        status_code = response.status_code
+        return response
+    finally:
+        duration = time.perf_counter() - start
+        endpoint = request.url.path
+
+        # Avoid high-cardinality labels such as query strings or input values.
+        HTTP_REQUESTS.labels(
+            request.method, endpoint, str(status_code)
+        ).inc()
+        HTTP_REQUEST_DURATION.labels(
+            request.method, endpoint
+        ).observe(duration)
+
+        logger.info(
+            "method=%s path=%s status=%s duration_seconds=%.6f",
+            request.method,
+            endpoint,
+            status_code,
+            duration,
+        )
+
+
 @app.on_event("startup")
 def load_model():
     global model
@@ -71,6 +116,7 @@ def root():
     return {
         "message": "Heart Disease Classification API",
         "docs": "/docs",
+        "metrics": "/metrics",
         "disclaimer": "Educational use only; not for clinical diagnosis.",
     }
 
@@ -83,9 +129,18 @@ def health():
     }
 
 
+@app.get("/metrics", include_in_schema=False)
+def metrics():
+    return Response(
+        content=generate_latest(),
+        media_type=CONTENT_TYPE_LATEST,
+    )
+
+
 @app.post("/predict")
 def predict(payload: HeartDiseaseInput):
     if model is None:
+        PREDICTION_REQUESTS.labels(outcome="model_unavailable").inc()
         raise HTTPException(status_code=503, detail="Model is not loaded")
 
     row = pd.DataFrame([payload.model_dump()], columns=FEATURES)
@@ -94,6 +149,8 @@ def predict(payload: HeartDiseaseInput):
         prediction = int(model.predict(row)[0])
         probabilities = model.predict_proba(row)[0]
         confidence = float(max(probabilities))
+
+        PREDICTION_REQUESTS.labels(outcome="success").inc()
 
         return {
             "prediction": prediction,
@@ -108,6 +165,8 @@ def predict(payload: HeartDiseaseInput):
             "disclaimer": "Educational output only; not a medical diagnosis.",
         }
     except Exception as exc:
+        PREDICTION_REQUESTS.labels(outcome="error").inc()
+        logger.exception("Prediction failed")
         raise HTTPException(
             status_code=500,
             detail="Prediction failed. Check the input values and model.",
