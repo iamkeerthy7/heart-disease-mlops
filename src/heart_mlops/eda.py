@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import matplotlib
+
 matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
@@ -99,7 +100,7 @@ def main() -> None:
     plt.close()
 
     # 4. Categorical feature distributions
-    fig, axes = plt.subplots(3, 3, figsize=(14, 12))
+    _, axes = plt.subplots(3, 3, figsize=(14, 12))
     for ax, column in zip(axes.flat, CATEGORICAL_COLUMNS):
         sns.countplot(data=df, x=column, ax=ax)
         ax.set_title(f"Distribution: {column}")

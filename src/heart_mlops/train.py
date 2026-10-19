@@ -1,7 +1,8 @@
-from pathlib import Path
 import json
+from pathlib import Path
 
 import matplotlib
+
 matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
@@ -9,23 +10,22 @@ import mlflow
 import mlflow.sklearn
 import pandas as pd
 import seaborn as sns
-
 from sklearn.compose import ColumnTransformer
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import (
     accuracy_score,
+    classification_report,
+    confusion_matrix,
     precision_score,
     recall_score,
     roc_auc_score,
-    confusion_matrix,
-    classification_report,
 )
 from sklearn.model_selection import (
+    GridSearchCV,
     StratifiedKFold,
     cross_validate,
-    GridSearchCV,
     train_test_split,
 )
 from sklearn.pipeline import Pipeline
