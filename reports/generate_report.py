@@ -312,6 +312,13 @@ def build_docx():
         "repository's screenshots/ directory. The EDA and confusion-matrix figures "
         "are maintained under reports/figures/. Consult README.md for exact "
         "commands, configuration, and local deployment instructions.")
+    doc_heading(doc, "Architecture")
+    doc_para(doc,
+        "The diagram below summarizes the data, training, experiment tracking, "
+        "API serving, CI/CD, container deployment and monitoring workflow.")
+    doc_image(doc, FIGURES / "architecture_diagram.png",
+              "Figure 17. End-to-end architecture of the implemented MLOps workflow.",
+              width=6.0)
     doc.save(DOCX_PATH)
 
 def build_pdf():
@@ -477,6 +484,14 @@ def build_pdf():
          "external validation, calibration, threshold analysis, drift monitoring, "
          "authentication, rate limiting, image/dependency scanning, secrets "
          "management and secure cloud deployment.")
+    page()
+    heading("Architecture")
+    para("The diagram summarizes the data, training, experiment tracking, API serving, "
+         "CI/CD, container deployment and monitoring workflow.")
+    image(FIGURES/"architecture_diagram.png",
+          "Figure 17. End-to-end architecture of the implemented MLOps workflow.",
+          maxw=170*mm, maxh=95*mm)
+
     heading("Conclusion")
     para("The implementation demonstrates the main MLOps stages from data analysis "
          "to monitored API serving. Logistic Regression was selected based on "
