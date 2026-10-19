@@ -9,3 +9,5 @@ uvicorn[standard]
 pytest
 httpx
 jupyter
+joblib
+pydantic
