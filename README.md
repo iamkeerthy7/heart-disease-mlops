@@ -1,4 +1,4 @@
-# Heart Disease Classification — MLOps Project
+# Heart Disease Classification — MLOps Assignment
 
 ## Overview
 
