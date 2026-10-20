@@ -94,9 +94,17 @@ def build_docx():
     doc.add_paragraph("\n\n")
     p = doc.add_paragraph("Repository: https://github.com/iamkeerthy7/heart-disease-mlops")
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p = doc.add_paragraph("Prepared: 19 October 2026")
+    p = doc.add_paragraph("Prepared: 20 October 2026")
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     doc.add_page_break()
+
+    doc_heading(doc, "Architecture")
+    doc_para(doc,
+        "The diagram summarizes the data, training, experiment tracking, API serving, "
+        "CI/CD, container deployment and monitoring workflow.")
+    doc_image(doc, FIGURES / "architecture_diagram.png",
+              "Figure 1. End-to-end architecture of the implemented MLOps workflow.",
+              width=6.0)
 
     doc_heading(doc, "Abstract")
     doc_para(doc,
@@ -134,9 +142,9 @@ def build_docx():
         "to keep the transformation reproducible and to avoid fitting imputers on "
         "the held-out test data.")
     doc_image(doc, FIGURES / "original_target_balance.png",
-              "Figure 1. Distribution of the original target values.")
+              "Figure 2. Distribution of the original target values.")
     doc_image(doc, FIGURES / "binary_class_balance.png",
-              "Figure 2. Class balance after binary target conversion.")
+              "Figure 3. Class balance after binary target conversion.")
 
     doc_heading(doc, "3. Exploratory data analysis")
     doc_para(doc,
@@ -146,11 +154,11 @@ def build_docx():
         "relationships between numeric variables and the structure of categorical "
         "features. Correlation is descriptive and does not establish causality.")
     doc_image(doc, FIGURES / "feature_histograms.png",
-              "Figure 3. Histograms of numeric feature distributions.")
+              "Figure 4. Histograms of numeric feature distributions.")
     doc_image(doc, FIGURES / "categorical_distributions.png",
-              "Figure 4. Distributions of categorical features.")
+              "Figure 5. Distributions of categorical features.")
     doc_image(doc, FIGURES / "correlation_heatmap.png",
-              "Figure 5. Correlation heatmap for the dataset.")
+              "Figure 6. Correlation heatmap for the dataset.")
 
     doc_heading(doc, "4. Preprocessing and model development")
     doc_para(doc,
@@ -194,9 +202,9 @@ def build_docx():
         "0.9025 versus 0.9020. The cross-validation difference is small, so the "
         "selection should not be interpreted as proof of general superiority.")
     doc_image(doc, FIGURES / "confusion_matrix_logistic_regression.png",
-              "Figure 6. Confusion matrix for Logistic Regression.")
+              "Figure 7. Confusion matrix for Logistic Regression.")
     doc_image(doc, FIGURES / "confusion_matrix_random_forest.png",
-              "Figure 7. Confusion matrix for Random Forest.")
+              "Figure 8. Confusion matrix for Random Forest.")
 
     doc_heading(doc, "6. Experiment tracking with MLflow")
     doc_para(doc,
@@ -206,9 +214,9 @@ def build_docx():
         "inspectable and supports repeatable experiments. Screenshots below provide "
         "visual evidence of recorded runs and a run-detail view.")
     doc_image(doc, SCREENSHOTS / "03-mlflow-runs.png",
-              "Figure 8. MLflow experiment runs.")
+              "Figure 9. MLflow experiment runs.")
     doc_image(doc, SCREENSHOTS / "03b-mlflow-run-details.png",
-              "Figure 9. MLflow run details and logged values.")
+              "Figure 10. MLflow run details and logged values.")
 
     doc_heading(doc, "7. Model persistence and API")
     doc_para(doc,
@@ -223,9 +231,9 @@ def build_docx():
         "pipeline ensures imputation, scaling and categorical encoding are applied "
         "at inference time using the fitted training transformations.")
     doc_image(doc, SCREENSHOTS / "06-docker-predict.png",
-              "Figure 10. Example prediction response from the containerized API.")
+              "Figure 11. Example prediction response from the containerized API.")
     doc_image(doc, SCREENSHOTS / "08-kubernetes-predict.png",
-              "Figure 11. Example prediction response through Kubernetes ingress.")
+              "Figure 12. Example prediction response through Kubernetes ingress.")
 
     doc_heading(doc, "8. Automated testing and CI")
     doc_para(doc,
@@ -240,7 +248,7 @@ def build_docx():
         "generated artifacts. A failing validation command causes the workflow to "
         "fail, making errors visible rather than silently ignored.")
     doc_image(doc, SCREENSHOTS / "04-github-actions.png",
-              "Figure 12. GitHub Actions workflow evidence.")
+              "Figure 13. GitHub Actions workflow evidence.")
 
     doc_heading(doc, "9. Docker and Kubernetes deployment")
     doc_para(doc,
@@ -248,7 +256,7 @@ def build_docx():
         "execution. The image exposes port 8000. The local container was tested "
         "using host port 8001 because port 8000 was already occupied on the host.")
     doc_image(doc, SCREENSHOTS / "05-docker-build.png",
-              "Figure 13. Docker image build evidence.")
+              "Figure 14. Docker image build evidence.")
     doc_para(doc,
         "Kubernetes manifests define the API Deployment, a LoadBalancer Service "
         "and an NGINX Ingress. The local Minikube deployment reached one ready "
@@ -256,7 +264,7 @@ def build_docx():
         "routes were tested. In local Minikube, a LoadBalancer external IP may "
         "remain pending; the ingress address is local and is not a public URL.")
     doc_image(doc, SCREENSHOTS / "07-kubernetes-resources.png",
-              "Figure 14. Kubernetes resources and deployment status.")
+              "Figure 15. Kubernetes resources and deployment status.")
 
     doc_heading(doc, "10. Monitoring and request logging")
     doc_para(doc,
@@ -265,9 +273,9 @@ def build_docx():
         "histograms and prediction outcome counters. A dashboard summarizes "
         "request volume, successful predictions, errors, latency and status.")
     doc_image(doc, SCREENSHOTS / "09-prometheus-metrics.png",
-              "Figure 15. Prometheus metrics exposed by the API.")
+              "Figure 16. Prometheus metrics exposed by the API.")
     doc_image(doc, SCREENSHOTS / "10-monitoring-dashboard.png",
-              "Figure 16. Application monitoring dashboard.")
+              "Figure 17. Application monitoring dashboard.")
 
     doc_heading(doc, "11. Reproducibility and repository layout")
     doc_para(doc,
@@ -312,13 +320,6 @@ def build_docx():
         "repository's screenshots/ directory. The EDA and confusion-matrix figures "
         "are maintained under reports/figures/. Consult README.md for exact "
         "commands, configuration, and local deployment instructions.")
-    doc_heading(doc, "Architecture")
-    doc_para(doc,
-        "The diagram below summarizes the data, training, experiment tracking, "
-        "API serving, CI/CD, container deployment and monitoring workflow.")
-    doc_image(doc, FIGURES / "architecture_diagram.png",
-              "Figure 17. End-to-end architecture of the implemented MLOps workflow.",
-              width=6.0)
     doc.save(DOCX_PATH)
 
 def build_pdf():
@@ -331,23 +332,23 @@ def build_pdf():
                               textColor=colors.grey))
     styles.add(ParagraphStyle(name="Section", parent=styles["Heading1"],
                               textColor=colors.HexColor("#1f4e79"),
-                              spaceBefore=8, spaceAfter=7))
+                              spaceBefore=5, spaceAfter=4))
     story = []
     def para(text, style="BodyText"):
         story.append(Paragraph(text, styles[style]))
-        story.append(Spacer(1, 5))
+        story.append(Spacer(1, 3))
     def heading(text):
         para(text, "Section")
     def page():
         story.append(PageBreak())
-    def image(path, caption, maxw=170*mm, maxh=105*mm):
+    def image(path, caption, maxw=165*mm, maxh=42*mm):
         path = Path(path)
         if path.exists():
             img = Image(str(path))
             scale = min(maxw/img.imageWidth, maxh/img.imageHeight)
             img.drawWidth = img.imageWidth * scale
             img.drawHeight = img.imageHeight * scale
-            story.extend([img, Paragraph(caption, styles["Caption"]), Spacer(1, 8)])
+            story.extend([img, Paragraph(caption, styles["Caption"]), Spacer(1, 4)])
     def table(data):
         t = Table(data, repeatRows=1, hAlign="LEFT")
         t.setStyle(TableStyle([
@@ -371,9 +372,17 @@ def build_pdf():
     para("AIMLCZG523 — MLOps Assignment 01")
     para("Reproducible ML, MLflow, automated testing, FastAPI, Docker, Kubernetes and monitoring")
     para("<link href='https://github.com/iamkeerthy7/heart-disease-mlops' color='blue'>Project repository</link>")
-    para("Prepared: 19 October 2026")
+    para("Prepared: 20 October 2026")
     page()
 
+    heading("Architecture")
+    para("The diagram summarizes data acquisition, preprocessing, model training, "
+         "MLflow tracking, API serving, CI/CD, container deployment and monitoring.")
+    image(FIGURES/"architecture_diagram.png",
+          "Figure 1. End-to-end architecture of the implemented MLOps workflow.",
+          maxw=160*mm, maxh=58*mm)
+    # Keep the architecture overview readable and separate from the report narrative.
+    page()
     heading("Abstract")
     para("This report documents an educational binary-classification MLOps project "
          "using the UCI Cleveland Heart Disease dataset. The workflow includes EDA, "
@@ -393,16 +402,16 @@ def build_pdf():
          "slope, ca and thal. The binary target is num > 0. Missing values were "
          "recorded for ca (4) and thal (2). Numeric features use median imputation "
          "and scaling; categorical features use most-frequent imputation and one-hot encoding.")
-    image(FIGURES/"original_target_balance.png", "Figure 1. Original target distribution.")
-    image(FIGURES/"binary_class_balance.png", "Figure 2. Binary target distribution.")
-    page()
+    image(FIGURES/"original_target_balance.png", "Figure 2. Original target distribution.")
+    image(FIGURES/"binary_class_balance.png", "Figure 3. Binary target distribution.")
     heading("3. Exploratory data analysis")
     para("EDA artifacts include target balance, numeric histograms, categorical "
          "distributions and a correlation heatmap. They help identify class balance, "
          "ranges and associations; correlation does not establish causality.")
-    image(FIGURES/"feature_histograms.png", "Figure 3. Numeric feature histograms.")
-    image(FIGURES/"categorical_distributions.png", "Figure 4. Categorical distributions.")
-    image(FIGURES/"correlation_heatmap.png", "Figure 5. Correlation heatmap.")
+    image(FIGURES/"feature_histograms.png", "Figure 4. Numeric feature histograms.")
+    image(FIGURES/"categorical_distributions.png", "Figure 5. Categorical distributions.")
+    image(FIGURES/"correlation_heatmap.png", "Figure 6. Correlation heatmap.")
+    # Separate exploratory figures from model-development details.
     page()
     heading("4. Preprocessing and model development")
     para("A ColumnTransformer keeps preprocessing consistent between training and "
@@ -428,24 +437,24 @@ def build_pdf():
          "0.9665, compared with 0.9513 for Random Forest. Mean CV ROC-AUC was "
          "0.9025 versus 0.9020, a small difference that does not establish "
          "general superiority.")
-    image(FIGURES/"confusion_matrix_logistic_regression.png", "Figure 6. Logistic Regression confusion matrix.")
-    image(FIGURES/"confusion_matrix_random_forest.png", "Figure 7. Random Forest confusion matrix.")
+    image(FIGURES/"confusion_matrix_logistic_regression.png", "Figure 7. Logistic Regression confusion matrix.")
+    image(FIGURES/"confusion_matrix_random_forest.png", "Figure 8. Random Forest confusion matrix.")
+    # Give model evaluation and confusion matrices a clear ending before MLOps tooling.
     page()
     heading("6. MLflow experiment tracking")
     para("MLflow records run parameters, metrics and artifacts, supporting inspection "
          "of experiments. Tracking data is stored locally in the project database "
          "and artifact directory.")
-    image(SCREENSHOTS/"03-mlflow-runs.png", "Figure 8. MLflow experiment runs.")
-    image(SCREENSHOTS/"03b-mlflow-run-details.png", "Figure 9. MLflow run details.")
+    image(SCREENSHOTS/"03-mlflow-runs.png", "Figure 9. MLflow experiment runs.")
+    image(SCREENSHOTS/"03b-mlflow-run-details.png", "Figure 10. MLflow run details.")
     heading("7. Model persistence and API")
     para("The selected pipeline is stored as models/best_model.joblib; "
          "models/model_metadata.json records the selected model, metric, target "
          "definition and feature list. FastAPI exposes health, prediction, metrics "
          "and dashboard endpoints. Predictions include class, label, confidence, "
          "probabilities and an educational-use disclaimer.")
-    image(SCREENSHOTS/"06-docker-predict.png", "Figure 10. Container API prediction.")
-    image(SCREENSHOTS/"08-kubernetes-predict.png", "Figure 11. Prediction through Kubernetes ingress.")
-    page()
+    image(SCREENSHOTS/"06-docker-predict.png", "Figure 11. Container API prediction.")
+    image(SCREENSHOTS/"08-kubernetes-predict.png", "Figure 12. Prediction through Kubernetes ingress.")
     heading("8. Testing and CI")
     para("The project has tests for API health, valid predictions, invalid age, "
          "missing features, metrics and dashboard behavior, plus preprocessing "
@@ -453,7 +462,7 @@ def build_pdf():
          "partitioning. Recorded verification was 10 passing tests; Ruff and "
          "compile checks also passed. GitHub Actions runs validation, tests and "
          "training, then uploads artifacts.")
-    image(SCREENSHOTS/"04-github-actions.png", "Figure 12. GitHub Actions evidence.")
+    image(SCREENSHOTS/"04-github-actions.png", "Figure 13. GitHub Actions evidence.")
     heading("9. Docker and Kubernetes")
     para("The Docker image packages the API and model and exposes port 8000. "
          "The container was tested on host port 8001 because port 8000 was occupied. "
@@ -461,16 +470,15 @@ def build_pdf():
          "NGINX Ingress. Local Minikube showed a ready replica and successful "
          "tests of health, prediction, metrics and dashboard routes. The local "
          "ingress address is not a public endpoint.")
-    image(SCREENSHOTS/"05-docker-build.png", "Figure 13. Docker build evidence.")
-    image(SCREENSHOTS/"07-kubernetes-resources.png", "Figure 14. Kubernetes resources.")
-    page()
+    image(SCREENSHOTS/"05-docker-build.png", "Figure 14. Docker build evidence.")
+    image(SCREENSHOTS/"07-kubernetes-resources.png", "Figure 15. Kubernetes resources.")
     heading("10. Monitoring and logging")
     para("Request middleware logs method, path, status and duration. Prometheus "
          "counters and latency histograms capture HTTP activity and prediction "
          "outcomes. The dashboard summarizes request volume, successful predictions, "
          "errors, latency and service status.")
-    image(SCREENSHOTS/"09-prometheus-metrics.png", "Figure 15. Prometheus metrics.")
-    image(SCREENSHOTS/"10-monitoring-dashboard.png", "Figure 16. Monitoring dashboard.")
+    image(SCREENSHOTS/"09-prometheus-metrics.png", "Figure 16. Prometheus metrics.")
+    image(SCREENSHOTS/"10-monitoring-dashboard.png", "Figure 17. Monitoring dashboard.")
     heading("11. Reproducibility")
     para("Key repository paths are data/heart.csv, src/heart_mlops/, tests/, "
          "models/, reports/figures/, deployment/k8s/, .github/workflows/ and "
@@ -484,14 +492,6 @@ def build_pdf():
          "external validation, calibration, threshold analysis, drift monitoring, "
          "authentication, rate limiting, image/dependency scanning, secrets "
          "management and secure cloud deployment.")
-    page()
-    heading("Architecture")
-    para("The diagram summarizes the data, training, experiment tracking, API serving, "
-         "CI/CD, container deployment and monitoring workflow.")
-    image(FIGURES/"architecture_diagram.png",
-          "Figure 17. End-to-end architecture of the implemented MLOps workflow.",
-          maxw=170*mm, maxh=95*mm)
-
     heading("Conclusion")
     para("The implementation demonstrates the main MLOps stages from data analysis "
          "to monitored API serving. Logistic Regression was selected based on "
@@ -512,8 +512,8 @@ def build_pdf():
         canvas.restoreState()
 
     pdf = SimpleDocTemplate(str(PDF_PATH), pagesize=A4,
-                            rightMargin=18*mm, leftMargin=18*mm,
-                            topMargin=15*mm, bottomMargin=17*mm,
+                            rightMargin=14*mm, leftMargin=14*mm,
+                            topMargin=12*mm, bottomMargin=14*mm,
                             title="Heart Disease MLOps Assignment Report",
                             author="MLOps Assignment")
     pdf.build(story, onFirstPage=footer, onLaterPages=footer)
